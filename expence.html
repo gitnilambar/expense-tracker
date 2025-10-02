@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Expense Tracker</title>
+  <style>
+    * {
+      margin: 0; padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+    body {
+      background: #f4f4f4;
+      display: flex; justify-content: center; align-items: center;
+      min-height: 100vh;
+    }
+    .container {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      width: 350px;
+      box-shadow: 0px 4px 10px rgba(0,0,0,0.2);
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 15px;
+    }
+   .form-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.form-group input {
+  flex: 1 1 100px;
+  min-width: 0;
+}
+
+.form-group button {
+  flex: 0 0 auto;
+}
+
+/* Responsive: Stack inputs & button on small screens */
+@media (max-width: 400px) {
+  .form-group {
+    flex-direction: column;
+  }
+  .form-group input,
+  .form-group button {
+    width: 100%;
+  }
+}
+    .form-group input {
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 16px;
+    }
+    button {
+      padding: 10px 15px;
+      border: none;
+      background: #28a745;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover { background: #218838; }
+    ul {
+      list-style: none;
+      margin-top: 15px;
+    }
+    ul li {
+      background: #f9f9f9;
+      margin: 5px 0;
+      padding: 10px;
+      border-left: 5px solid #28a745;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .total {
+      margin-top: 15px;
+      font-weight: bold;
+      text-align: center;
+      font-size: 18px;
+    }
+    .delete {
+      background: red;
+      padding: 5px 10px;
+      border-radius: 5px;
+      color: white;
+      cursor: pointer;
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Expense Tracker</h2>
+    
+    <div class="form-group">
+      <input type="text" id="title" placeholder="Expense name">
+      <input type="number" id="amount" placeholder="Amount">
+      <button onclick="addExpense()">Add</button>
+    </div>
+
+    <ul id="expenseList"></ul>
+
+    <div class="total">Total: ₹<span id="totalAmount">0</span></div>
+  </div>
+
+  <script>
+    let expenses = JSON.parse(localStorage.getItem("expenses")) || [];
+
+    function renderExpenses() {
+      let expenseList = document.getElementById("expenseList");
+      let total = 0;
+      expenseList.innerHTML = "";
+      
+      expenses.forEach((exp, index) => {
+        total += exp.amount;
+        expenseList.innerHTML += `
+          <li>
+            ${exp.title} - ₹${exp.amount}
+            <span class="delete" onclick="deleteExpense(${index})">X</span>
+          </li>
+        `;
+      });
+
+      document.getElementById("totalAmount").innerText = total;
+      localStorage.setItem("expenses", JSON.stringify(expenses));
+    }
+
+    function addExpense() {
+      let title = document.getElementById("title").value;
+      let amount = document.getElementById("amount").value;
+
+      if (title === "" || amount === "") {
+        alert("Please enter both fields");
+        return;
+      }
+
+      expenses.push({ title, amount: Number(amount) });
+      document.getElementById("title").value = "";
+      document.getElementById("amount").value = "";
+      renderExpenses();
+    }
+
+    function deleteExpense(index) {
+      expenses.splice(index, 1);
+      renderExpenses();
+    }
+
+    // Initial render
+    renderExpenses();
+  </script>
+</body>
+</html>
